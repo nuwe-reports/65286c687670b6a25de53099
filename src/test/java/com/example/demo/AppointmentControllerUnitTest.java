@@ -38,7 +38,7 @@ class AppointmentControllerUnitTest{
     @MockBean
     private AppointmentRepository appointmentRepository;
 
-    @Autowired 
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -46,13 +46,13 @@ class AppointmentControllerUnitTest{
 
     @Test
     void shouldCreateAppointment() throws Exception {
-        
+
         Patient patient = new Patient("Jose Luis", "Olaya", 37, "j.olaya@email.com");
         Doctor doctor = new Doctor ("Perla", "Amalia", 24, "p.amalia@hospital.accwe");
         Room room = new Room("Dermatology");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        
+
         LocalDateTime startsAt= LocalDateTime.parse("19:30 24/04/2023", formatter);
         LocalDateTime finishesAt = LocalDateTime.parse("20:30 24/04/2023", formatter);
 
@@ -61,18 +61,18 @@ class AppointmentControllerUnitTest{
         mockMvc.perform(post("/api/appointment").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(appointment)))
                 .andExpect(status().isOk());
-                
+
     }
 
     @Test
     void shouldNotCreateAppointment() throws Exception {
-        
+
         Patient patient = new Patient("Jose Luis", "Olaya", 37, "j.olaya@email.com");
         Doctor doctor = new Doctor ("Perla", "Amalia", 24, "p.amalia@hospital.accwe");
         Room room = new Room("Dermatology");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        
+
         LocalDateTime startsAt= LocalDateTime.parse("19:30 24/04/2023", formatter);
         LocalDateTime finishesAt = LocalDateTime.parse("19:30 24/04/2023", formatter);
 
@@ -93,30 +93,24 @@ class AppointmentControllerUnitTest{
         Room room = new Room("Dermatology");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        
+
         LocalDateTime startsAt= LocalDateTime.parse("19:30 24/04/2023", formatter);
         LocalDateTime finishesAt = LocalDateTime.parse("20:30 24/04/2023", formatter);
 
         Appointment appointment = new Appointment(patient, doctor, room, startsAt, finishesAt);
         Appointment appointment2 = new Appointment(patient2, doctor2, room, startsAt, finishesAt);
-        
 
         mockMvc.perform(post("/api/appointment").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(appointment)))
                 .andExpect(status().isOk());
-                
-
-
 
         List<Appointment> appointments = new ArrayList<Appointment>();
         appointments.add(appointment);
-        
+
         when(appointmentRepository.findAll()).thenReturn(appointments);
         mockMvc.perform(post("/api/appointment").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(appointment2)))
                 .andExpect(status().isNotAcceptable());
-                
-
     }
 
     @Test
@@ -130,7 +124,7 @@ class AppointmentControllerUnitTest{
         Room room2 = new Room("Oncology");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        
+
         LocalDateTime startsAt= LocalDateTime.parse("19:30 24/04/2023", formatter);
         LocalDateTime finishesAt = LocalDateTime.parse("20:30 24/04/2023", formatter);
 
@@ -143,28 +137,25 @@ class AppointmentControllerUnitTest{
         mockMvc.perform(post("/api/appointment").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(appointment)))
                 .andExpect(status().isOk());
-                
-
 
 
         List<Appointment> appointments = new ArrayList<Appointment>();
         appointments.add(appointment);
-        
+
         when(appointmentRepository.findAll()).thenReturn(appointments);
         mockMvc.perform(post("/api/appointment").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(appointment2)))
                 .andExpect(status().isOk());
-                
 
     }
-    
+
     @Test
     void shouldGetNoAppointments() throws Exception{
         List<Appointment> appointments = new ArrayList<Appointment>();
         when(appointmentRepository.findAll()).thenReturn(appointments);
         mockMvc.perform(get("/api/appointments"))
                 .andExpect(status().isNoContent());
-                
+
     }
 
     @Test
@@ -176,7 +167,7 @@ class AppointmentControllerUnitTest{
         Room room = new Room("Dermatology");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        
+
         LocalDateTime startsAt= LocalDateTime.parse("19:00 24/04/2023", formatter);
         LocalDateTime startsAt2= LocalDateTime.parse("19:30 24/04/2023", formatter);
 
@@ -193,7 +184,7 @@ class AppointmentControllerUnitTest{
         when(appointmentRepository.findAll()).thenReturn(appointments);
         mockMvc.perform(get("/api/appointments"))
                 .andExpect(status().isOk());
-                
+
     }
 
     @Test
@@ -203,7 +194,7 @@ class AppointmentControllerUnitTest{
         Room room = new Room("Dermatology");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        
+
         LocalDateTime startsAt= LocalDateTime.parse("19:00 24/04/2023", formatter);
 
         LocalDateTime finishesAt = LocalDateTime.parse("20:00 24/04/2023", formatter);
@@ -221,15 +212,15 @@ class AppointmentControllerUnitTest{
         when(appointmentRepository.findById(appointment.getId())).thenReturn(opt);
         mockMvc.perform(get("/api/appointments/" + appointment.getId()))
                 .andExpect(status().isOk());
-                
+
     }
-    
+
     @Test
     void shouldNotGetAnyAppointmentById() throws Exception{
         long id = 31;
         mockMvc.perform(get("/api/appointments/" + id))
                 .andExpect(status().isNotFound());
-                
+
     }
 
     @Test
@@ -239,7 +230,7 @@ class AppointmentControllerUnitTest{
         Room room = new Room("Dermatology");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        
+
         LocalDateTime startsAt= LocalDateTime.parse("19:00 24/04/2023", formatter);
 
         LocalDateTime finishesAt = LocalDateTime.parse("20:00 24/04/2023", formatter);
@@ -257,7 +248,7 @@ class AppointmentControllerUnitTest{
         when(appointmentRepository.findById(appointment.getId())).thenReturn(opt);
         mockMvc.perform(delete("/api/appointments/" + appointment.getId()))
                 .andExpect(status().isOk());
-                
+
     }
 
     @Test
@@ -265,14 +256,14 @@ class AppointmentControllerUnitTest{
         long id = 31;
         mockMvc.perform(delete("/api/appointments/" + id))
                 .andExpect(status().isNotFound());
-                
+
     }
 
     @Test
     void shouldDeleteAllAppointments() throws Exception{
         mockMvc.perform(delete("/api/appointments"))
                 .andExpect(status().isOk());
-                
+
     }
 }
 
