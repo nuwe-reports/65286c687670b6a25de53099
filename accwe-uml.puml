@@ -1,0 +1,134 @@
+@startuml
+package com.example.demo.entities {
+    class Person {
+        - firstName: String
+        - lastName: String
+        - age: int
+        - email: String
+
+        + Person()
+        + Person(firstName: String, lastName: String, age: int, email: String)
+        + getFirstName(): String
+        + setFirstName(firstName: String): void
+        + getLastName(): String
+        + setLastName(lastName: String): void
+        + getAge(): int
+        + setAge(age: int): void
+        + getEmail(): String
+        + setEmail(email: String): void
+    }
+
+    class Doctor extends Person {
+        - id: long
+
+        + Doctor()
+        + Doctor(firstName: String, lastName: String, age: int, email: String)
+        + getId(): long
+        + setId(id: long): void
+    }
+
+    class Patient extends Person {
+        - id: long
+
+        + Patient()
+        + Patient(firstName: String, lastName: String, age: int, email: String)
+        + getId(): long
+        + setId(id: long): void
+    }
+
+    class Room {
+        - roomName: String
+
+        + Room()
+        + Room(roomName: String)
+        + getRoomName(): String
+    }
+
+    class Appointment {
+        - id: long
+        - startsAt: LocalDateTime
+        - finishesAt: LocalDateTime
+        - patient: Patient
+        - doctor: Doctor
+        - room: Room
+
+        + Appointment()
+        + Appointment(patient: Patient, doctor: Doctor, room: Room, startsAt: LocalDateTime, finishesAt: LocalDateTime)
+        + getId(): long
+        + setId(id: long): void
+        + getStartsAt(): LocalDateTime
+        + setStartsAt(startsAt: LocalDateTime): void
+        + getFinishesAt(): LocalDateTime
+        + setFinishesAt(finishesAt: LocalDateTime): void
+        + getPatient(): Patient
+        + setPatient(patient: Patient): void
+        + getDoctor(): Doctor
+        + setDoctor(doctor: Doctor): void
+        + getRoom(): Room
+        + setRoom(room: Room): void
+        + overlaps(appointment: Appointment): boolean
+    }
+}
+
+package com.example.demo.controllers {
+    class AppointmentController {
+        - appointmentRepository: AppointmentRepository
+
+        + AppointmentController(appointmentRepository: AppointmentRepository)
+        + getAllAppointments(): ResponseEntity<List<Appointment>>
+        + getAppointmentById(id: long): ResponseEntity<Appointment>
+        + createAppointment(appointment: Appointment): ResponseEntity<?>
+        + isAppointmentInvalid(appointment: Appointment): boolean
+        + isAppointmentOverlap(appointment: Appointment): boolean
+        + deleteAppointment(id: long): ResponseEntity<HttpStatus>
+        + deleteAllAppointments(): ResponseEntity<HttpStatus>
+    }
+
+    class DoctorController {
+        - doctorRepository: DoctorRepository
+
+        + DoctorController(doctorRepository: DoctorRepository)
+        + getAllDoctors(): ResponseEntity<List<Doctor>>
+        + getDoctorById(id: long): ResponseEntity<Doctor>
+        + createDoctor(doc: Doctor): ResponseEntity<Doctor>
+        + deleteDoctor(id: long): ResponseEntity<HttpStatus>
+        + deleteAllDoctors(): ResponseEntity<HttpStatus>
+    }
+
+    class PatientController {
+        - patientRepository: PatientRepository
+
+        + PatientController(patientRepository: PatientRepository)
+        + getAllPatients(): ResponseEntity<List<Patient>>
+        + getPatientById(id: long): ResponseEntity<Patient>
+        + createPatient(pat: Patient): ResponseEntity<Patient>
+        + deletePatient(id: long): ResponseEntity<HttpStatus>
+        + deleteAllPatients(): ResponseEntity<HttpStatus>
+    }
+
+    class RoomController {
+        - roomRepository: RoomRepository
+
+        + RoomController(roomRepository: RoomRepository)
+        + getAllRooms(): ResponseEntity<List<Room>>
+        + getRoomByRoomName(roomName: String): ResponseEntity<Room>
+        + createRoom(room: Room): ResponseEntity<Room>
+        + deleteRoom(roomName: String): ResponseEntity<HttpStatus>
+        + deleteAllRooms(): ResponseEntity<HttpStatus>
+    }
+}
+
+Doctor --|{ Appointment : has
+Patient --|{ Appointment : has
+Appointment -- Room : requires
+
+AppointmentController -- Appointment : uses
+DoctorController -- Doctor : uses
+PatientController -- Patient : uses
+RoomController -- Room : uses
+
+AppointmentController --|{ AppointmentRepository : depends
+DoctorController --|{ DoctorRepository : depends
+PatientController --|{ PatientRepository : depends
+RoomController --|{ RoomRepository : depends
+@enduml

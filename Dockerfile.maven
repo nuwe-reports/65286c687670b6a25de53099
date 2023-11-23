@@ -1,0 +1,28 @@
+# Dockerfile.maven
+
+# Etapa 1: Construye la aplicación y ejecuta las pruebas
+FROM maven:3.8.4-openjdk-11 AS builder
+
+# Crea un directorio de la aplicación en el contenedor
+WORKDIR /app
+
+# Copia los archivos del proyecto al contenedor
+COPY . /app
+
+# Empaqueta la aplicación y ejecuta las pruebas
+RUN mvn clean install
+
+# Etapa 2: Construye la imagen final con el artefacto construido
+FROM openjdk:11-jre-slim
+
+# Crea un directorio de la aplicación en el contenedor
+WORKDIR /app
+
+# Copia solo los artefactos necesarios desde la etapa anterior
+COPY --from=builder /app/target/accenture-techhub-0.0.1-SNAPSHOT.war /app/app.war
+
+# Expone el puerto en el que la aplicación se ejecutará
+EXPOSE 8080
+
+# Comando por defecto para ejecutar la aplicación
+CMD ["java", "-jar", "app.war"]

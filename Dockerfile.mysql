@@ -1,0 +1,11 @@
+# Dockerfile.mysql
+
+# Utiliza una imagen base de MySQL
+FROM mysql:latest
+
+# Establece las variables de entorno para configurar la base de datos MySQL
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=accwe-hospital
+
+# Expone el puerto en el que MySQL estará escuchando
+EXPOSE 3306

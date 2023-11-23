@@ -29,13 +29,10 @@ public class AppointmentController {
     @GetMapping("/appointments")
     public ResponseEntity<List<Appointment>> getAllAppointments(){
         List<Appointment> appointments = new ArrayList<>();
-
         appointmentRepository.findAll().forEach(appointments::add);
-
         if (appointments.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
         return new ResponseEntity<>(appointments, HttpStatus.OK);
     }
 
@@ -51,12 +48,37 @@ public class AppointmentController {
     }
 
     @PostMapping("/appointment")
-    public ResponseEntity<List<Appointment>> createAppointment(@RequestBody Appointment appointment){
-        /** TODO 
-         * Implement this function, which acts as the POST /api/appointment endpoint.
-         * Make sure to check out the whole project. Specially the Appointment.java class
-         */
-        return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+    public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) {
+        if (isAppointmentInvalid(appointment)) {
+            return new ResponseEntity<>("The appointment is invalid.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (isAppointmentOverlap(appointment)) {
+            return new ResponseEntity<>("The appointment overlaps with another existing appointment.", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // Guarda la nueva cita
+        Appointment newAppointment = appointmentRepository.save(appointment);
+
+        return new ResponseEntity<>(newAppointment, HttpStatus.OK);
+    }
+
+    private boolean isAppointmentInvalid(Appointment appointment) {
+        // Verifica si la hora de inicio es igual a la hora de finalización
+        return appointment.getStartsAt().isEqual(appointment.getFinishesAt());
+    }
+
+
+    private boolean isAppointmentOverlap(Appointment appointment) {
+        List<Appointment> existingAppointments = appointmentRepository.findAll();
+
+        for (Appointment existingAppointment : existingAppointments) {
+            if (existingAppointment.overlaps(appointment)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
@@ -72,7 +94,7 @@ public class AppointmentController {
         appointmentRepository.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
-        
+
     }
 
     @DeleteMapping("/appointments")
