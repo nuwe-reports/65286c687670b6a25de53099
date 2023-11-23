@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app-container
+          image: accwe-app:latest
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql:3306/accwe-hospital"
+            - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
+              value: "com.mysql.cj.jdbc.Driver"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "root"
+            - name: SPRING_JPA_HIBERNATE_DDL-AUTO
+              value: "update"
+            - name: SPRING_JPA_DATABASE-PLATFORM
+              value: "org.hibernate.dialect.MySQL5InnoDBDialect"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+spec:
+  selector:
+    app: app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

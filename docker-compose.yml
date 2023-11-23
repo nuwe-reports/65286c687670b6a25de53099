@@ -23,6 +23,4 @@ services:
       SPRING_JPA_DATABASE-PLATFORM: org.hibernate.dialect.MySQL5InnoDBDialect
 
 
-  # docker build -t accwe-mysql -f Dockerfile.mysql .
 
-#  docker build -t accwe-mysql -f Dockerfile.maven .
