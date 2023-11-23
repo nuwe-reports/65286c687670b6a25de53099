@@ -1,0 +1,28 @@
+version: '3'
+services:
+  mysql:
+    image: accwe-mysql  # Utiliza el nombre que diste a tu imagen de MySQL
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: accwe-hospital
+    ports:
+      - "3306:3306"
+
+  app:
+    image: accwe-app  # Utiliza el nombre que diste a tu imagen de la aplicación
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/accwe-hospital
+      SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SPRING_JPA_DATABASE-PLATFORM: org.hibernate.dialect.MySQL5InnoDBDialect
+
+
+  # docker build -t accwe-mysql -f Dockerfile.mysql .
+
+#  docker build -t accwe-mysql -f Dockerfile.maven .
